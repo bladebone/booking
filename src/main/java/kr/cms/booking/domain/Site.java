@@ -1,16 +1,13 @@
 package kr.cms.booking.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class BookingTime extends BaseTimeEntity {
+public class Site extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,19 +17,19 @@ public class BookingTime extends BaseTimeEntity {
     private String code;
 
     @Column(nullable = false)
-    private int hour;
+    private String title;
 
     @Column(nullable = false)
-    private int minute;
+    private int sequence;
 
     @Column(nullable = false)
-    private boolean bookable;
+    private boolean isAlive;
 
     @Builder
-    public BookingTime(String code, int hour, int minute, boolean bookable) {
+    public Site(String code, String title, int sequence, boolean isAlive) {
         this.code = code;
-        this.hour = hour;
-        this.minute = minute;
-        this.bookable = bookable;
+        this.title = title;
+        this.sequence = sequence;
+        this.isAlive = isAlive;
     }
 }

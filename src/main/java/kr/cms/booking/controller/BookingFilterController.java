@@ -1,21 +1,39 @@
 package kr.cms.booking.controller;
 
 import kr.cms.booking.domain.Booking;
-import org.springframework.boot.json.JsonParser;
+import kr.cms.booking.repository.BookingRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/booking")
 public class BookingFilterController {
 
+    private BookingRepository bookingRepository;
+
     @GetMapping("/all")
     public List<Booking> getAllBooking() {
-        return new ArrayList<Booking>();
+        List<Booking> bookingList = new ArrayList<>();
+
+        bookingList.add(Booking.builder()
+                .facilityId(11)
+                .year(2018)
+                .weekOfYear(1)
+                .bookingDate(LocalDateTime.now())
+                .bookingTimeId(11)
+                .meetingTitleId(2)
+                .userId(5899)
+                .build());
+
+        return bookingList;
     }
 
+    /*
     @GetMapping("/building/{buildingId}")
     public List<Booking> getBookingBuilding(@PathVariable String buildingId) {
         return new ArrayList<Booking>();
@@ -30,4 +48,5 @@ public class BookingFilterController {
     public List<Booking> getBookingTime(@PathVariable int startTime, @PathVariable int endTime) {
         return new ArrayList<Booking>();
     }
+    */
 }

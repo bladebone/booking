@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class BookingTime extends BaseTimeEntity {
+public class BookingReason extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,19 +20,19 @@ public class BookingTime extends BaseTimeEntity {
     private String code;
 
     @Column(nullable = false)
-    private int hour;
+    private String title;
 
     @Column(nullable = false)
-    private int minute;
+    private int sequence;
 
     @Column(nullable = false)
-    private boolean bookable;
+    private boolean isForUser;
 
     @Builder
-    public BookingTime(String code, int hour, int minute, boolean bookable) {
+    public BookingReason(String code, String title, int sequence, boolean isForUser) {
         this.code = code;
-        this.hour = hour;
-        this.minute = minute;
-        this.bookable = bookable;
+        this.title = title;
+        this.sequence = sequence;
+        this.isForUser = isForUser;
     }
 }

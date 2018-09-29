@@ -1,0 +1,27 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+GET http://localhost:8080/booking/all
+
+###
+
+POST http://localhost:8080/booking
+Content-Type: application/json
+
+{
+  "id": 0,
+  "facilityId": 11,
+  "year": 2018,
+  "weekOfYear": 1,
+  "bookingDate": "2018-09-29T02:02:28.540+0000",
+  "bookingTimeId": 11,
+  "meetingTitleId": 2,
+  "userId": 5899,
+  "regDate": "2018-09-29T02:02:28.540+0000"
+}
+
+###

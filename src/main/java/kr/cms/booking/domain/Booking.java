@@ -1,24 +1,48 @@
 package kr.cms.booking.domain;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
-public class Booking {
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Entity
+public class Booking extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(nullable = false)
+    private long facilityId;
+
+    @Column(nullable = false)
     private int year;
+
+    @Column(nullable = false)
     private int weekOfYear;
-    private Facility facility;
-    private BookingTime[] bookingTime;
-    private String meetingTitle;
-    private UserInfo userInfo;
 
-    public Booking() {}
+    @Column(nullable = false)
+    private LocalDateTime bookingDate;
 
-    public Booking(int year, int weekOfYear, Facility facility, BookingTime[] bookingTime, String meetingTitle, UserInfo userInfo) {
+    @Column(nullable = false)
+    private long bookingTimeId;
+
+    @Column(nullable = false)
+    private long meetingTitleId;
+
+    @Column(nullable = false)
+    private long userId;
+
+    @Builder
+    public Booking(long facilityId, int year, int weekOfYear, LocalDateTime bookingDate, long bookingTimeId, long meetingTitleId, long userId) {
+        this.facilityId = facilityId;
         this.year = year;
         this.weekOfYear = weekOfYear;
-        this.facility = facility;
-        this.bookingTime = bookingTime;
-        this.meetingTitle = meetingTitle;
-        this.userInfo = userInfo;
+        this.bookingDate = bookingDate;
+        this.bookingTimeId = bookingTimeId;
+        this.meetingTitleId = meetingTitleId;
+        this.userId = userId;
     }
 }
