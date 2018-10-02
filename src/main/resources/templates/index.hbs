@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <title>시설예약</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">시설예약</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <span class="navbar-text">
+            아바드팀 2셀 서형준
+        </span>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">시간선택</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+<script src="/webjars/handlebars/4.0.11/handlebars.js"></script>
+
+<div class="container" id="tableDiv"></div>
+
+<script id="table-template" type="text/x-handlebars-template">
+<table class="table table-hover table-bordered table-sm">
+    <thead>
+    <tr>
+        <th scope="col" colspan="2">구분1</th>
+        \{{#each dayOfWeekList}}
+            <th scope="col" class="day \{{eng}}">\{{kor}}<input type="hidden" name="\{{eng}}" value="N" /></th>
+        \{{/each}}
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th class="site C01" rowspan="3">지하1층</th>
+        <th class="facility C0101">이레실<input type="hidden" name="C0101" value="N" /></th>
+        \{{#each dayOfWeekList}}
+        <td class="\{{eng}} C0101"></td>
+        \{{/each}}
+    </tr>
+    <tr>
+        <th class="facility C0102">나눔터<input type="hidden" name="C0102" value="N" /></th>
+        \{{#each dayOfWeekList}}
+        <td class="\{{eng}} C0102"></td>
+        \{{/each}}
+    </tr>
+    <tr>
+        <th class="facility C0103">드림실<input type="hidden" name="C0103" value="N" /></th>
+        \{{#each dayOfWeekList}}
+        <td class="\{{eng}} C0103"></td>
+        \{{/each}}
+    </tr>
+    </tbody>
+</table>
+</script>
+
+<script>
+    var source = $('#table-template').html();
+    var template = Handlebars.compile(source);
+    var templateData = {};
+
+    $.getJSON('/dayOfWeekList', function(data) {
+        if (data)
+            templateData.dayOfWeekList = data;
+    }).done(function() {
+        $('#tableDiv').html(template(templateData));
+    });
+
+    $(function() {
+        $('tbody th.facility').mousedown(function() {
+            if ($(this).hasClass('table-success')) {
+                $(this).removeClass('table-success');
+                $(this).find('input').val('N');
+            } else {
+                $(this).addClass('table-success');
+                $(this).find('input').val('Y');
+            }
+        }).mouseenter(function(e) {
+            if (e.buttons === 1) {
+                $(this).mousedown();
+            }
+        });
+
+        $('tbody th.site:hover').unbind();
+
+        $('tbody th.site').mousedown(function() {
+            var siteCode = $(this).attr('class').split(' ', 2)[1];
+            if ($(this).hasClass('table-success')) {
+                $(this).removeClass('table-success');
+                $(this).find('input').val('N');
+                $('th[class*=' + siteCode + ']').each(function() {
+                    $(this).removeClass('table-success');
+                    $(this).find('input').val('N');
+                });
+            } else {
+                $(this).addClass('table-success');
+                $(this).find('input').val('Y');
+                $('th[class*=' + siteCode + ']').each(function() {
+                    $(this).addClass('table-success');
+                    $(this).find('input').val('Y');
+                });
+            }
+        }).mouseenter(function(e) {
+            if (e.buttons === 1) {
+                $(this).mousedown();
+            }
+        });
+
+        $('thead th.day').mousedown(function() {
+            if ($(this).hasClass('table-success')) {
+                $(this).removeClass('table-success');
+                $(this).find('input').val('N');
+            } else {
+                $(this).addClass('table-success');
+                $(this).find('input').val('Y');
+            }
+        }).mouseenter(function(e) {
+            if (e.buttons === 1) {
+                $(this).mousedown();
+            }
+        });
+    });
+</script>
+
+<script src="/webjars/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+</body>
+</html>

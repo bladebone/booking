@@ -14,3 +14,8 @@ spring:
   h2:
     console:
       enabled: true
+  devtools:
+    livereload:
+      enabled: true
+  handlebars:
+    cache: false
