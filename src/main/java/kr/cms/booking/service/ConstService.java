@@ -3,10 +3,9 @@ package kr.cms.booking.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -15,40 +14,13 @@ public class ConstService {
     public List<Map<String, Object>> dayOfWeekList() {
         List<Map<String, Object>> dayOfWeekList = new ArrayList<>();
 
-        Map<String, Object> dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "sun");
-        dayOfWeek.put("kor", "일");
-        dayOfWeekList.add(dayOfWeek);
-
-        dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "mon");
-        dayOfWeek.put("kor", "월");
-        dayOfWeekList.add(dayOfWeek);
-
-        dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "tue");
-        dayOfWeek.put("kor", "화");
-        dayOfWeekList.add(dayOfWeek);
-
-        dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "wed");
-        dayOfWeek.put("kor", "수");
-        dayOfWeekList.add(dayOfWeek);
-
-        dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "thu");
-        dayOfWeek.put("kor", "목");
-        dayOfWeekList.add(dayOfWeek);
-
-        dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "fri");
-        dayOfWeek.put("kor", "금");
-        dayOfWeekList.add(dayOfWeek);
-
-        dayOfWeek = new HashMap<>();
-        dayOfWeek.put("eng", "sat");
-        dayOfWeek.put("kor", "토");
-        dayOfWeekList.add(dayOfWeek);
+        Map<String, Object> dayOfWeekMap;
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            dayOfWeekMap = new HashMap<>();
+            dayOfWeekMap.put("eng", dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ROOT));
+            dayOfWeekMap.put("kor", dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREA));
+            dayOfWeekList.add(dayOfWeekMap);
+        }
 
         return dayOfWeekList;
     }

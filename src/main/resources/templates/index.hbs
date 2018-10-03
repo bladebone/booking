@@ -7,6 +7,14 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css">
+    <style>
+        th, td {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
 
     <title>시설예약</title>
 </head>
@@ -33,117 +41,94 @@
     </div>
 </nav>
 
+<!-- Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                Loading...
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+<script src="/webjars/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
 <script src="/webjars/handlebars/4.0.11/handlebars.js"></script>
 
-<div class="container" id="tableDiv"></div>
+<div class="container mt-3 border-light" id="timeDiv"></div>
 
-<script id="table-template" type="text/x-handlebars-template">
-<table class="table table-hover table-bordered table-sm">
-    <thead>
-    <tr>
-        <th scope="col" colspan="2">구분1</th>
-        \{{#each dayOfWeekList}}
-            <th scope="col" class="day \{{eng}}">\{{kor}}<input type="hidden" name="\{{eng}}" value="N" /></th>
-        \{{/each}}
-    </tr>
-    </thead>
+<script id="time-template" type="text/x-handlebars-template">
+<h4>시간 선택</h4>
+<table class="table table-bordered table-sm">
     <tbody>
     <tr>
-        <th class="site C01" rowspan="3">지하1층</th>
-        <th class="facility C0101">이레실<input type="hidden" name="C0101" value="N" /></th>
-        \{{#each dayOfWeekList}}
-        <td class="\{{eng}} C0101"></td>
+        <th rowspan="2">AM</th>
+        \{{#each am6List}}
+        <td class="time \{{code}}">
+            <input type="hidden" value="\{{code}}" value="N" />
+            <small>\{{title}}</small>
+        </td>
         \{{/each}}
     </tr>
     <tr>
-        <th class="facility C0102">나눔터<input type="hidden" name="C0102" value="N" /></th>
-        \{{#each dayOfWeekList}}
-        <td class="\{{eng}} C0102"></td>
+        \{{#each am12List}}
+        <td class="time \{{code}}">
+            <input type="hidden" value="\{{code}}" value="N" />
+            <small>\{{title}}</small>
+        </td>
         \{{/each}}
     </tr>
     <tr>
-        <th class="facility C0103">드림실<input type="hidden" name="C0103" value="N" /></th>
-        \{{#each dayOfWeekList}}
-        <td class="\{{eng}} C0103"></td>
+        <th rowspan="2">PM</th>
+        \{{#each pm18List}}
+        <td class="time \{{code}}">
+            <input type="hidden" value="\{{code}}" value="N" />
+            <small>\{{title}}</small>
+        </td>
+        \{{/each}}
+    </tr>
+    <tr>
+        \{{#each pm24List}}
+        <td class="time \{{code}}">
+            <input type="hidden" value="\{{code}}" value="N" />
+            <small>\{{title}}</small>
+        </td>
         \{{/each}}
     </tr>
     </tbody>
 </table>
 </script>
 
-<script>
-    var source = $('#table-template').html();
-    var template = Handlebars.compile(source);
-    var templateData = {};
+<div class="container border-light" id="facilityDiv"></div>
 
-    $.getJSON('/dayOfWeekList', function(data) {
-        if (data)
-            templateData.dayOfWeekList = data;
-    }).done(function() {
-        $('#tableDiv').html(template(templateData));
-    });
-
-    $(function() {
-        $('tbody th.facility').mousedown(function() {
-            if ($(this).hasClass('table-success')) {
-                $(this).removeClass('table-success');
-                $(this).find('input').val('N');
-            } else {
-                $(this).addClass('table-success');
-                $(this).find('input').val('Y');
-            }
-        }).mouseenter(function(e) {
-            if (e.buttons === 1) {
-                $(this).mousedown();
-            }
-        });
-
-        $('tbody th.site:hover').unbind();
-
-        $('tbody th.site').mousedown(function() {
-            var siteCode = $(this).attr('class').split(' ', 2)[1];
-            if ($(this).hasClass('table-success')) {
-                $(this).removeClass('table-success');
-                $(this).find('input').val('N');
-                $('th[class*=' + siteCode + ']').each(function() {
-                    $(this).removeClass('table-success');
-                    $(this).find('input').val('N');
-                });
-            } else {
-                $(this).addClass('table-success');
-                $(this).find('input').val('Y');
-                $('th[class*=' + siteCode + ']').each(function() {
-                    $(this).addClass('table-success');
-                    $(this).find('input').val('Y');
-                });
-            }
-        }).mouseenter(function(e) {
-            if (e.buttons === 1) {
-                $(this).mousedown();
-            }
-        });
-
-        $('thead th.day').mousedown(function() {
-            if ($(this).hasClass('table-success')) {
-                $(this).removeClass('table-success');
-                $(this).find('input').val('N');
-            } else {
-                $(this).addClass('table-success');
-                $(this).find('input').val('Y');
-            }
-        }).mouseenter(function(e) {
-            if (e.buttons === 1) {
-                $(this).mousedown();
-            }
-        });
-    });
+<script id="facility-template" type="text/x-handlebars-template">
+<h4>시설 선택</h4>
+<table class="table table-bordered table-sm">
+    <thead>
+    <tr>
+        <th scope="col">구분</th>
+        <th scope="col">시설</th>
+        {{#each dayOfWeekList}}<th scope="col" class="day {{eng}}">{{kor}}<input type="hidden" name="{{eng}}" value="N" /></th>{{/each}}
+    </tr>
+    </thead>
+    <tbody>
+    \{{#each facilityList}}
+    <tr>
+        \{{#ifFirst sequence}}\{{getSiteTH siteId}}\{{/ifFirst}}
+        <th class="facility \{{code}}">\{{title}}<input type="hidden" name="\{{code}}" value="N" /></th>
+        {{#each dayOfWeekList}}<td class="{{eng}} \{{code}}"></td>{{/each}}
+    </tr>
+    \{{/each}}
+    </tbody>
+</table>
 </script>
 
-<script src="/webjars/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script src="/js/app/index.js"></script>
 
 </body>
 </html>
