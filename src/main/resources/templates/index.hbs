@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
-        th, td {
+        #timeDiv, #facilityDiv {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -60,48 +60,20 @@
 
 <script src="/webjars/handlebars/4.0.11/handlebars.js"></script>
 
+<div class="container" id="pageLayout">
+
 <div class="container mt-3 border-light" id="timeDiv"></div>
 
 <script id="time-template" type="text/x-handlebars-template">
 <h4>시간 선택</h4>
-<table class="table table-bordered table-sm">
-    <tbody>
-    <tr>
-        <th rowspan="2">AM</th>
-        \{{#each am6List}}
-        <td class="time \{{code}}">
-            <input type="hidden" value="\{{code}}" value="N" />
-            <small>\{{title}}</small>
-        </td>
-        \{{/each}}
-    </tr>
-    <tr>
-        \{{#each am12List}}
-        <td class="time \{{code}}">
-            <input type="hidden" value="\{{code}}" value="N" />
-            <small>\{{title}}</small>
-        </td>
-        \{{/each}}
-    </tr>
-    <tr>
-        <th rowspan="2">PM</th>
-        \{{#each pm18List}}
-        <td class="time \{{code}}">
-            <input type="hidden" value="\{{code}}" value="N" />
-            <small>\{{title}}</small>
-        </td>
-        \{{/each}}
-    </tr>
-    <tr>
-        \{{#each pm24List}}
-        <td class="time \{{code}}">
-            <input type="hidden" value="\{{code}}" value="N" />
-            <small>\{{title}}</small>
-        </td>
-        \{{/each}}
-    </tr>
-    </tbody>
-</table>
+<div class="d-flex align-content-start flex-wrap">
+    \{{#each bookingTimeList}}
+    <div class="m-1 p-1 bd-highlight border time \{{code}}">
+        <input type="hidden" name="\{{code}}" value="N" />
+        <small class="text-monospace">\{{code}}</small>
+    </div>
+    \{{/each}}
+</div>
 </script>
 
 <div class="container border-light" id="facilityDiv"></div>
@@ -127,6 +99,8 @@
     </tbody>
 </table>
 </script>
+
+</div>
 
 <script src="/js/app/index.js"></script>
 

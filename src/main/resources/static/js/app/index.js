@@ -42,25 +42,29 @@ var index = {
         ).done(function(bookingTimeList, dayOfWeekList, siteList, facilityList) {
 
             if (bookingTimeList) {
-                var am6Data = [];
-                var am12Data = [];
-                var pm18Data = [];
-                var pm24Data = [];
+                // var am6Data = [];
+                // var am12Data = [];
+                // var pm18Data = [];
+                // var pm24Data = [];
+                var data = [];
                 $.each(bookingTimeList[0], function() {
-                    this['title'] = this['code'].substring(this['code'].indexOf(':') + 1);
-                    if (this['hour'] < 6)
-                        am6Data.push(this);
-                    else if (this['hour'] < 12)
-                        am12Data.push(this);
-                    else if (this['hour'] < 18)
-                        pm18Data.push(this);
-                    else
-                        pm24Data.push(this);
+                    // this['title'] = this['code'].substring(this['code'].indexOf(':') + 1);
+                    // if (this['hour'] < 6)
+                    //     am6Data.push(this);
+                    // else if (this['hour'] < 12)
+                    //     am12Data.push(this);
+                    // else if (this['hour'] < 18)
+                    //     pm18Data.push(this);
+                    // else
+                    //     pm24Data.push(this);
+                    if (this['bookable'])
+                        data.push(this);
                 });
-                timeData.am6List = am6Data;
-                timeData.am12List = am12Data;
-                timeData.pm18List = pm18Data;
-                timeData.pm24List = pm24Data;
+                // timeData.am6List = am6Data;
+                // timeData.am12List = am12Data;
+                // timeData.pm18List = pm18Data;
+                // timeData.pm24List = pm24Data;
+                timeData.bookingTimeList = data;
 
                 $('#timeDiv').html(timeTemplate(timeData));
             }
@@ -83,19 +87,39 @@ var index = {
     },
 
     eventHandling : function() {
-        $('td.time').mousedown(function() {
-            if ($(this).hasClass('table-success')) {
-                $(this).removeClass('table-success');
+        $('div.time').mousedown(function() {
+
+            var limitLength = 4;
+            var selectedLength = $('div.time.bg-success').length;
+
+            if ($(this).hasClass('bg-success')) {
+                $(this).removeClass('bg-success');
                 $(this).find('input').val('N');
+                $(this).nextAll().each(function () {
+                    $(this).removeClass('bg-success');
+                    $(this).find('input').val('N');
+                });
             } else {
-                if ($('td.time.table-success').length < 4) {
-                    $(this).addClass('table-success');
+                if (selectedLength >= limitLength
+                    || selectedLength === 0
+                    || !$(this).prev().hasClass('bg-success') && !$(this).next().hasClass('bg-success')) {
+
+                    $('div.time').each(function () {
+                        $(this).removeClass('bg-success');
+                        $(this).find('input').val('N');
+                    });
+                    $(this).addClass('bg-success');
+                    $(this).find('input').val('Y');
+                    var $targetObj = $(this);
+                    for (var i = 0; i < 3; i++) {
+                        $targetObj = $targetObj.next();
+                        $targetObj.addClass('bg-success');
+                        $targetObj.find('input').val('Y');
+                    }
+                } else {
+                    $(this).addClass('bg-success');
                     $(this).find('input').val('Y');
                 }
-            }
-        }).mouseenter(function(e) {
-            if (e.buttons === 1) {
-                $(this).mousedown();
             }
         });
 
