@@ -41,41 +41,24 @@ var index = {
             $.getJSON('/facilityList')
         ).done(function(bookingTimeList, dayOfWeekList, siteList, facilityList) {
 
-            if (bookingTimeList) {
-                // var am6Data = [];
-                // var am12Data = [];
-                // var pm18Data = [];
-                // var pm24Data = [];
+            if (bookingTimeList[1] === 'success') {
                 var data = [];
                 $.each(bookingTimeList[0], function() {
-                    // this['title'] = this['code'].substring(this['code'].indexOf(':') + 1);
-                    // if (this['hour'] < 6)
-                    //     am6Data.push(this);
-                    // else if (this['hour'] < 12)
-                    //     am12Data.push(this);
-                    // else if (this['hour'] < 18)
-                    //     pm18Data.push(this);
-                    // else
-                    //     pm24Data.push(this);
-                    if (this['bookable'])
+                    if (this.bookable)
                         data.push(this);
                 });
-                // timeData.am6List = am6Data;
-                // timeData.am12List = am12Data;
-                // timeData.pm18List = pm18Data;
-                // timeData.pm24List = pm24Data;
                 timeData.bookingTimeList = data;
 
                 $('#timeDiv').html(timeTemplate(timeData));
             }
 
-            if (dayOfWeekList)
+            if (dayOfWeekList[1] === 'success')
                 facilityData.dayOfWeekList = dayOfWeekList[0];
 
-            if (siteList)
+            if (siteList[1] === 'success')
                 facilityData.siteList = siteList[0];
 
-            if (facilityList)
+            if (facilityList[1] === 'success')
                 facilityData.facilityList = facilityList[0];
 
             $('#facilityDiv').html(facilityTemplate(facilityData));
@@ -87,38 +70,42 @@ var index = {
     },
 
     eventHandling : function() {
+
         $('div.time').mousedown(function() {
+
+            var switchOn = function(object) {
+                object.addClass('bg-success');
+                object.find('input').val('Y');
+            };
+
+            var switchOff = function(object) {
+                object.removeClass('bg-success');
+                object.find('input').val('N');
+            };
 
             var limitLength = 4;
             var selectedLength = $('div.time.bg-success').length;
 
             if ($(this).hasClass('bg-success')) {
-                $(this).removeClass('bg-success');
-                $(this).find('input').val('N');
+                switchOff($(this));
                 $(this).nextAll().each(function () {
-                    $(this).removeClass('bg-success');
-                    $(this).find('input').val('N');
+                    switchOff($(this));
                 });
             } else {
                 if (selectedLength >= limitLength
                     || selectedLength === 0
                     || !$(this).prev().hasClass('bg-success') && !$(this).next().hasClass('bg-success')) {
 
-                    $('div.time').each(function () {
-                        $(this).removeClass('bg-success');
-                        $(this).find('input').val('N');
+                    $('div.time.bg-success').each(function () {
+                        switchOff($(this));
                     });
-                    $(this).addClass('bg-success');
-                    $(this).find('input').val('Y');
                     var $targetObj = $(this);
-                    for (var i = 0; i < 3; i++) {
+                    for (var i = 0; i < limitLength; i++) {
+                        switchOn($targetObj);
                         $targetObj = $targetObj.next();
-                        $targetObj.addClass('bg-success');
-                        $targetObj.find('input').val('Y');
                     }
                 } else {
-                    $(this).addClass('bg-success');
-                    $(this).find('input').val('Y');
+                    switchOn($(this));
                 }
             }
         });
