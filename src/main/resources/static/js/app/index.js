@@ -10,6 +10,9 @@ var index = {
 
     handlebarsInit: function(readyFunc) {
 
+        var daySource = $('#day-template').html();
+        var dayTemplate = Handlebars.compile(daySource);
+
         var timeSource = $('#time-template').html();
         var timeTemplate = Handlebars.compile(timeSource);
         var timeData = {};
@@ -41,6 +44,8 @@ var index = {
             $.getJSON('/facilityList')
         ).done(function(bookingTimeList, dayOfWeekList, siteList, facilityList) {
 
+            $('#dayDiv').html(dayTemplate());
+
             if (bookingTimeList[1] === 'success') {
                 var data = [];
                 $.each(bookingTimeList[0], function() {
@@ -71,22 +76,52 @@ var index = {
 
     eventHandling : function() {
 
+        var selectedClass = 'bg-warning';
+
+        var switchOn = function(object) {
+            object.addClass(selectedClass).find('input').prop('checked', true);//val('Y');
+        };
+
+        var switchOff = function(object) {
+            object.removeClass(selectedClass).find('input').prop('checked', false);//.val('N');
+        };
+
+        $('div.day').mousedown(function() {
+
+            if ($(this).hasClass(selectedClass)) {
+                switchOff($(this));
+            } else {
+                $('div.day.' + selectedClass).each(function() {
+                    switchOff($(this));
+                });
+                switchOn($(this));
+            }
+
+            var selectedLength = $('div.day.' + selectedClass).length;
+
+            if (selectedLength) {
+                $('#selectedDayCount').html(selectedLength);
+                $('#selectedDayText').html($('div.day.' + selectedClass).first().find('input').val());
+            } else {
+                $('#selectedDayCount').html('');
+                $('#selectedDayText').html('');
+            }
+        });
+
+        $('#selectedDayText').mousedown(function() {
+            $('div.day.' + selectedClass).each(function () {
+                $(this).removeClass(selectedClass).find('input').prop('checked', false);
+                $('#selectedDayCount').html('');
+                $('#selectedDayText').html('');
+            });
+        });
+
         $('div.time').mousedown(function() {
 
-            var switchOn = function(object) {
-                object.addClass('bg-success');
-                object.find('input').val('Y');
-            };
-
-            var switchOff = function(object) {
-                object.removeClass('bg-success');
-                object.find('input').val('N');
-            };
-
             var limitLength = 4;
-            var selectedLength = $('div.time.bg-success').length;
+            var selectedLength = $('div.time.' + selectedClass).length;
 
-            if ($(this).hasClass('bg-success')) {
+            if ($(this).hasClass(selectedClass)) {
                 switchOff($(this));
                 $(this).nextAll().each(function () {
                     switchOff($(this));
@@ -94,9 +129,9 @@ var index = {
             } else {
                 if (selectedLength >= limitLength
                     || selectedLength === 0
-                    || !$(this).prev().hasClass('bg-success') && !$(this).next().hasClass('bg-success')) {
+                    || !$(this).prev().hasClass(selectedClass) && !$(this).next().hasClass(selectedClass)) {
 
-                    $('div.time.bg-success').each(function () {
+                    $('div.time.' + selectedClass).each(function () {
                         switchOff($(this));
                     });
                     var $targetObj = $(this);
@@ -108,15 +143,35 @@ var index = {
                     switchOn($(this));
                 }
             }
+
+            selectedLength = $('div.time.' + selectedClass).length;
+
+            if (selectedLength) {
+                $('#selectedTimeCount').html(selectedLength);
+                var timeText = '';
+                $('div.time.' + selectedClass).each(function() {
+                    timeText += $(this).find('input').val() + ' ';
+                });
+                $('#selectedTimeText').html(timeText);
+            } else {
+                $('#selectedTimeCount').html('');
+                $('#selectedTimeText').html('');
+            }
+        });
+
+        $('#selectedTimeText').mousedown(function() {
+            $('div.time.' + selectedClass).each(function () {
+                $(this).removeClass(selectedClass).find('input').prop('checked', false);
+                $('#selectedTimeCount').html('');
+                $('#selectedTimeText').html('');
+            });
         });
 
         $('th.facility').mousedown(function() {
             if ($(this).hasClass('table-success')) {
-                $(this).removeClass('table-success');
-                $(this).find('input').val('N');
+                $(this).removeClass('table-success').find('input').val('N');
             } else {
-                $(this).addClass('table-success');
-                $(this).find('input').val('Y');
+                $(this).addClass('table-success').find('input').val('Y');
             }
         }).mouseenter(function(e) {
             if (e.buttons === 1) {
@@ -127,18 +182,14 @@ var index = {
         $('th.site').mousedown(function() {
             var siteCode = $(this).attr('class').split(' ', 2)[1];
             if ($(this).hasClass('table-success')) {
-                $(this).removeClass('table-success');
-                $(this).find('input').val('N');
+                $(this).removeClass('table-success').find('input').val('N');
                 $('th[class*=' + siteCode + ']').each(function() {
-                    $(this).removeClass('table-success');
-                    $(this).find('input').val('N');
+                    $(this).removeClass('table-success').find('input').val('N');
                 });
             } else {
-                $(this).addClass('table-success');
-                $(this).find('input').val('Y');
+                $(this).addClass('table-success').find('input').val('Y');
                 $('th[class*=' + siteCode + ']').each(function() {
-                    $(this).addClass('table-success');
-                    $(this).find('input').val('Y');
+                    $(this).addClass('table-success').find('input').val('Y');
                 });
             }
         }).mouseenter(function(e) {

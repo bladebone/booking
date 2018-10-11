@@ -14,6 +14,13 @@
             -ms-user-select: none;
             user-select: none;
         }
+        #pageLayout input[type="checkbox"] {
+            height: 0;
+            width: 0;
+        }
+        .card-header {
+            overflow: hidden;
+        }
     </style>
 
     <title>시설예약</title>
@@ -60,26 +67,78 @@
 
 <script src="/webjars/handlebars/4.0.11/handlebars.js"></script>
 
-<div class="container" id="pageLayout">
+<div class="accordion" id="pageLayout">
 
-<div class="container mt-3 border-light" id="timeDiv"></div>
+<div class="card">
+    <div class="card-header d-flex align-items-center" id="headingDay">
+        <div class="mb-0">
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapseDay" aria-expanded="true" aria-controls="collapseDay">
+                요일 선택
+                <span class="text-monospace badge badge-light" id="selectedDayCount"></span>
+            </button>
+        </div>
+        <div class="mb-0 ml-3">
+            <button class="text-monospace badge badge-light" id="selectedDayText"></button>
+        </div>
+    </div>
+    <div id="collapseDay" class="collapse show" aria-labelledby="headingDay" data-parent="#pageLayout">
+        <div class="card-body" id="dayDiv"></div>
+    </div>
+</div>
+
+<script id="day-template" type="text/x-handlebars-template">
+    <div class="d-flex align-content-start flex-wrap">
+        {{#each dayOfWeekList}}
+        <div class="m-1 p-1 bd-highlight border day {{eng}}">
+            <input type="checkbox" name="dayItem" value="{{eng}}" />
+            <small class="text-monospace">{{kor}}요일</small>
+        </div>
+        {{/each}}
+    </div>
+</script>
+
+<div class="card">
+    <div class="card-header d-flex align-items-center" id="headingTime">
+        <div class="mb-0">
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapseTime" aria-expanded="true" aria-controls="collapseTime">
+                시간 선택
+                <span class="text-monospace badge badge-light" id="selectedTimeCount"></span>
+            </button>
+        </div>
+        <div class="mb-0 ml-3">
+            <button class="text-monospace badge badge-light" id="selectedTimeText"></button>
+        </div>
+    </div>
+    <div id="collapseTime" class="collapse" aria-labelledby="headingTime" data-parent="#pageLayout">
+        <div class="card-body" id="timeDiv"></div>
+    </div>
+</div>
 
 <script id="time-template" type="text/x-handlebars-template">
-<h4>시간 선택</h4>
 <div class="d-flex align-content-start flex-wrap">
     \{{#each bookingTimeList}}
     <div class="m-1 p-1 bd-highlight border time \{{code}}">
-        <input type="hidden" name="\{{code}}" value="N" />
+        <input type="checkbox" name="timeItem" value="\{{code}}" />
         <small class="text-monospace">\{{code}}</small>
     </div>
     \{{/each}}
 </div>
 </script>
 
-<div class="container border-light" id="facilityDiv"></div>
+<div class="card">
+    <div class="card-header" id="headingFacility">
+        <h2 class="mb-0">
+            <button class="btn btn-info collapsed" type="button" data-toggle="collapse" data-target="#collapseFacility" aria-expanded="false" aria-controls="collapseFacility">
+                시설 선택
+            </button>
+        </h2>
+    </div>
+    <div id="collapseFacility" class="collapse" aria-labelledby="headingFacility" data-parent="#pageLayout">
+        <div class="card-body" id="facilityDiv"></div>
+    </div>
+</div>
 
 <script id="facility-template" type="text/x-handlebars-template">
-<h4>시설 선택</h4>
 <table class="table table-bordered table-sm">
     <thead>
     <tr>
